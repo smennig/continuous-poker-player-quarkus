@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.continuouspoker.player.model.Bet;
 import org.continuouspoker.player.model.Card;
+import org.continuouspoker.player.model.Player;
 import org.continuouspoker.player.model.Rank;
 import org.continuouspoker.player.model.Table;
 
@@ -21,22 +22,33 @@ public class Strategy {
 
         if (isPair(getCommunityCards(table), getCards(table))){
             System.out.println("Is Pair "+ getCards(table));
-            bet =  new Bet().bet(table.getMinimumBet() +40);
+            bet =  new Bet().bet(checkFundsOrMinimumBet(table.getMinimumBet() +40, table));
         }else{
 
             bet = new Bet().bet(table.getMinimumBet());
         }
-        System.out.println("Betting: "+bet);
-        return bet;
+        System.out.println("Betting: "+bet);return bet;
     }
 
-    private static Bet goAllIn(final Table table) {
+    private int checkFundsOrMinimumBet(int bet, Table table){
+        if (getPlayer(table).getStack() >= bet){
+            return bet;
+        }
+        else {
+            return table.getMinimumBet();
+        }
+    }
+
+    private  Bet goAllIn(final Table table) {
         return new Bet().bet(table.getPlayers().get(table.getActivePlayer()).getStack());
     }
 
     private List<Card> getCards(final Table table) {
-        return table.getPlayers()
-                .get(table.getActivePlayer()).getCards();
+        return getPlayer(table).getCards();
+    }
+
+    private Player getPlayer(final Table table) {
+        return table.getPlayers().get(table.getActivePlayer());
     }
 
     private List<Card> getCommunityCards(final Table table) {
