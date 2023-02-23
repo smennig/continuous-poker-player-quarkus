@@ -20,6 +20,7 @@ public class Strategy {
         var cards = getCards(table);
         System.out.println(cards);
 
+        bet = checkFundsOrMinimumBet(bet, table);
         bet = isPair(getCommunityCards(table), getCards(table), bet);
         System.out.println("Betting: "+bet);
         return new Bet().bet(bet);
