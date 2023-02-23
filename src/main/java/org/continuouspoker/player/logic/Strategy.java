@@ -65,6 +65,7 @@ public class Strategy {
         }
         for (Rank rank : pairs.keySet()) {
             if (pairs.get(rank) != null && pairs.get(rank) >= 2) {
+                System.out.println("We had a pair");
                 bet+=50;
             }
         }
