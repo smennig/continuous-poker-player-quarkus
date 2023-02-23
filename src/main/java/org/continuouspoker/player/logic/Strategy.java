@@ -30,11 +30,7 @@ public class Strategy {
 
     private List<Card> getCards(final Table table) {
         return table.getPlayers()
-                .stream()
-                .filter(player1 -> player1.getName().equals("die-planlosen-bluffer"))
-                .map(player1 -> player1.getCards())
-                .findFirst()
-                .get();
+                .get(table.getActivePlayer()).getCards();
     }
 
     private List<Card> getCommunityCards(final Table table) {
