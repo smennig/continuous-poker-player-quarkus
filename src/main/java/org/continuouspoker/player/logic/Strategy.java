@@ -14,15 +14,20 @@ public class Strategy {
 
     public Bet decide(final Table table) {
         System.out.println(table);
+        Bet bet;
 
         var cards = getCards(table);
         System.out.println(cards);
 
         if (isPair(getCommunityCards(table), getCards(table))){
             System.out.println("Is Pair "+ getCards(table));
-            return new Bet().bet(table.getMinimumBet() +40);
+            bet =  new Bet().bet(table.getMinimumBet() +40);
+        }else{
+
+            bet = new Bet().bet(table.getMinimumBet());
         }
-        return  new Bet().bet(table.getMinimumBet());
+        System.out.println("Betting: "+bet);
+        return bet;
     }
 
     private static Bet goAllIn(final Table table) {
