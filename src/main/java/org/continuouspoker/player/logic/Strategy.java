@@ -15,19 +15,14 @@ public class Strategy {
 
     public Bet decide(final Table table) {
         System.out.println(table);
-        Bet bet;
+        int bet = 0;
 
         var cards = getCards(table);
         System.out.println(cards);
 
-        if (isPair(getCommunityCards(table), getCards(table))){
-            System.out.println("Is Pair "+ getCards(table));
-            bet =  new Bet().bet(checkFundsOrMinimumBet(table.getMinimumBet() +40, table));
-        }else{
-
-            bet = new Bet().bet(table.getMinimumBet());
-        }
-        System.out.println("Betting: "+bet);return bet;
+        bet = isPair(getCommunityCards(table), getCards(table), bet);
+        System.out.println("Betting: "+bet);
+        return new Bet().bet(bet);
     }
 
     private int checkFundsOrMinimumBet(int bet, Table table){
@@ -55,7 +50,7 @@ public class Strategy {
         return table.getCommunityCards();
     }
 
-    private boolean isPair(List<Card> communityCards, List<Card> playerCards) {
+    private int isPair(List<Card> communityCards, List<Card> playerCards, int bet) {
         communityCards.addAll(playerCards);
         Map<Rank, Integer> pairs = new HashMap<>();
         for (Card card : communityCards) {
@@ -68,10 +63,10 @@ public class Strategy {
         }
         for (Rank rank : pairs.keySet()) {
             if (pairs.get(rank) != null && pairs.get(rank) >= 2) {
-                return true;
+                bet+=50;
             }
         }
-        return false;
+        return bet;
     }
 
 }
