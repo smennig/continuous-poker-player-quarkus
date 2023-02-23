@@ -19,6 +19,7 @@ public class Strategy {
         System.out.println(cards);
 
         if (isPair(getCommunityCards(table), getCards(table))){
+            System.out.println("Is Pair "+ getCards(table));
             return new Bet().bet(table.getMinimumBet() +40);
         }
         return  new Bet().bet(table.getMinimumBet());
