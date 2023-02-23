@@ -14,7 +14,11 @@ public class Strategy {
       var cards = getCards(table);
       System.out.println(cards);
 
-      return new Bet().bet(table.getMinimumBet());
+      return goAllIn(table);
+   }
+
+   private static Bet goAllIn(final Table table) {
+      return new Bet().bet(table.getPlayers().get(table.getActivePlayer()).getStack());
    }
 
    private  List<Card> getCards(final Table table) {
@@ -25,5 +29,20 @@ public class Strategy {
               .findFirst()
               .get();
    }
+   private  List<Card> getCommunityCards(final Table table) {
+      return table.getCommunityCards();
+   }
+
+   private boolean isPair (List<Card> communityCards,List<Card> playerCards  ){
+      communityCards.addAll(playerCards);
+
+      for(Card card : communityCards){
+
+      }
+      return false;
+   }
+/*   private int countPairs (List<Card> communityCards,List<Card> playerCards  ){
+      communityCards.addAll(playerCards)
+   }*/
 
 }
