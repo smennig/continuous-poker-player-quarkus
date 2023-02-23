@@ -30,6 +30,9 @@ public class Strategy {
         if (getPlayer(table).getStack() >= bet){
             return bet;
         }
+        else if(table.getRound() == 1){
+            return table.getMinimumBet();
+        }
         else {
             return table.getMinimumBet();
         }
