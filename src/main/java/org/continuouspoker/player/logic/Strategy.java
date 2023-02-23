@@ -3,7 +3,6 @@ package org.continuouspoker.player.logic;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.continuouspoker.player.model.Bet;
 import org.continuouspoker.player.model.Card;
@@ -21,7 +20,7 @@ public class Strategy {
         System.out.println(cards);
 
 
-        bet = isPair(getCommunityCards(table), getCards(table), bet);
+        bet = isPair(getCommunityCards(table), getCards(table), bet, table);
         bet = checkFundsOrMinimumBet(bet, table);
         System.out.println("Betting: "+bet);
         return new Bet().bet(bet);
@@ -52,7 +51,7 @@ public class Strategy {
         return table.getCommunityCards();
     }
 
-    private int isPair(List<Card> communityCards, List<Card> playerCards, int bet) {
+    private int isPair(List<Card> communityCards, List<Card> playerCards, int bet, final Table table) {
         communityCards.addAll(playerCards);
         Map<Rank, Integer> pairs = new HashMap<>();
         for (Card card : communityCards) {
@@ -66,7 +65,7 @@ public class Strategy {
         for (Rank rank : pairs.keySet()) {
             if (pairs.get(rank) != null && pairs.get(rank) >= 2) {
                 System.out.println("We had a pair");
-                bet+=50;
+                bet+= table.getMinimumRaise();
             }
         }
         return bet;
