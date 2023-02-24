@@ -1,8 +1,9 @@
 package org.continuouspoker.player.logic;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.continuouspoker.player.model.Bet;
 import org.continuouspoker.player.model.Card;
@@ -12,34 +13,45 @@ import org.continuouspoker.player.model.Table;
 
 public class Strategy {
 
+    private List<Card> playerCards;
+    private List<Card> communityCards;
+    private Player player;
+    private Table table;
+
     public Bet decide(final Table table) {
+        init(table);
+
         System.out.println(table);
         int bet = 0;
 
         var cards = getCards(table);
         System.out.println(cards);
 
-
-        bet = isPair(getCommunityCards(table), getCards(table), bet, table);
-        bet = checkFundsOrMinimumBet(bet, table);
-        System.out.println("Betting: "+bet);
+        bet = isPair(bet);
+        bet = checkFundsOrMinimumBet(bet);
+        System.out.println("Betting: " + bet);
         return new Bet().bet(bet);
     }
 
-    private int checkFundsOrMinimumBet(int bet, Table table){
-        if (getPlayer(table).getStack() >= bet){
+    private void init(final Table table) {
+        this.table = table;
+        player = getPlayer(table);
+        playerCards = getCards(table);
+        communityCards = getCommunityCards(table);
+    }
+
+    private int checkFundsOrMinimumBet(int bet) {
+        if (player.getStack() >= bet) {
             return bet;
-        }
-        else if(table.getRound() == 0){
+        } else if (table.getRound() == 0) {
             return table.getMinimumBet();
-        }
-        else {
+        } else {
             return table.getMinimumBet();
         }
     }
 
-    private  Bet goAllIn(final Table table) {
-        return new Bet().bet(table.getPlayers().get(table.getActivePlayer()).getStack());
+    private Bet goAllIn() {
+        return new Bet().bet(player.getStack());
     }
 
     private List<Card> getCards(final Table table) {
@@ -54,21 +66,15 @@ public class Strategy {
         return table.getCommunityCards();
     }
 
-    private int isPair(List<Card> communityCards, List<Card> playerCards, int bet, final Table table) {
-        communityCards.addAll(playerCards);
-        Map<Rank, Integer> pairs = new HashMap<>();
-        for (Card card : communityCards) {
-            final Integer pair = pairs.get(card.getRank());
-            if (pair == null) {
-                pairs.put(card.getRank(), 1);
-            } else {
-                pairs.put(card.getRank(), pair + 1);
-            }
-        }
-        for (Rank rank : pairs.keySet()) {
-            if (pairs.get(rank) != null && pairs.get(rank) >= 2) {
+    private int isPair(int bet) {
+        final Map<Rank, List<Card>> cardsByRank = Stream.concat(playerCards.stream(), communityCards.stream())
+                .collect(Collectors.groupingBy(Card::getRank));
+
+
+        for (Rank rank : cardsByRank.keySet()) {
+            if (cardsByRank.get(rank) != null && cardsByRank.get(rank).size() >= 2) {
                 System.out.println("We had a pair");
-                bet+= table.getMinimumRaise();
+               return bet + table.getMinimumRaise();
             }
         }
         return bet;
